@@ -21,7 +21,7 @@ public class BoardItem {
     @Column
     private Date date;
 
-    @Column
+    @Column(columnDefinition = "text")
     private String text;
 
     public Long getId() {
