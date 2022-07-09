@@ -16,7 +16,7 @@ public class BoardItemController {
     @Autowired
     private BoardItemRepository boardItemRepository;
 
-    @RequestMapping("/board/list")
+    @RequestMapping("/list")
     @ResponseBody
     public List<BoardItem> List(Model model) {
         return boardItemRepository.findAll();
