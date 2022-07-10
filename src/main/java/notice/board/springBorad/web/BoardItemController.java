@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -18,16 +19,25 @@ public class BoardItemController {
     @Autowired
     private BoardItemRepository boardItemRepository;
 
-    @GetMapping("")
+    @GetMapping("/")
     public String showList(Model model) {
-        List<Integer> list = new ArrayList<>();
-
-        for(int i=0;i<5;i++){
-            list.add(i+1);
-        }
+        List<BoardItem> list = boardItemRepository.findAll();
 
         model.addAttribute("list", list);
         return "main";
+    }
+
+    @GetMapping("/{id}")
+    public String showItem(Model model, @PathVariable("id") String id) {
+        BoardItem item = boardItemRepository.findById(Long.parseLong(id)).get();
+
+        model.addAttribute("item", item);
+        return "read";
+    }
+
+    @GetMapping("/back")
+    public String reset() {
+        return "redirect:/";
     }
 
     @RequestMapping("/list")

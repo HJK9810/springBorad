@@ -1,0 +1,35 @@
+table {
+    margin: 10px auto;
+    border-collapse: collapse;
+    width: 600px;
+}
+
+tr {
+    border: 1px solid black;
+}
+
+td {
+    border: 1px dotted blue;
+    padding: 5px;
+}
+
+tfoot td {
+    padding-top: 20px;
+    border: none;
+}
+
+span {
+    display: inline-block;
+    width: 100px;
+}
+
+textarea {
+    resize: none;
+    width: 100%;
+    height: 100%;
+    padding: 1px;
+}
+
+textarea:focus {
+    outline: none;
+}
