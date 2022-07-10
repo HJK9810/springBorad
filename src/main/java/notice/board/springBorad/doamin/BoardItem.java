@@ -15,7 +15,7 @@ public class BoardItem {
     @Column
     private String title;
 
-    @Column
+    @Column(length = 20)
     private String editer;
 
     @Column
