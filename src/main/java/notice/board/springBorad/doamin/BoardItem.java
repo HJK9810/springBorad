@@ -18,7 +18,7 @@ public class BoardItem {
     @Column(length = 20)
     private String editer;
 
-    @Column
+    @Column(columnDefinition = "date")
     private Date date;
 
     @Column(columnDefinition = "text")
