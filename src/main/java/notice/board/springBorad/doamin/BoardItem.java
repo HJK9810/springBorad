@@ -1,5 +1,7 @@
 package notice.board.springBorad.doamin;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -20,6 +22,9 @@ public class BoardItem {
 
     @Column(columnDefinition = "date")
     private Date date;
+
+    @ColumnDefault("0")
+    private Integer viewCnt;
 
     @Column(columnDefinition = "text")
     private String text;
@@ -62,5 +67,13 @@ public class BoardItem {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public Integer getViewCnt() {
+        return viewCnt;
+    }
+
+    public void setViewCnt(Integer viewCnt) {
+        this.viewCnt = viewCnt;
     }
 }

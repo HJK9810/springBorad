@@ -1,0 +1,34 @@
+package notice.board.springBorad.web;
+
+import notice.board.springBorad.doamin.BoardItem;
+import notice.board.springBorad.repository.BoardItemRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/postApi")
+public class PostController {
+    @Autowired
+    private BoardItemRepository boardItemRepository;
+
+    @GetMapping("/list")
+    public ResponseEntity<Page<BoardItem>> getList(Pageable pageable) {
+        Page<BoardItem> list = boardItemRepository.findAll(pageable);
+
+        return new ResponseEntity<Page<BoardItem>>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/One/{id}")
+    public ResponseEntity<BoardItem> getOne(@PathVariable("id") String id) {
+        BoardItem item = boardItemRepository.findById(Long.parseLong(id)).get();
+
+        return new ResponseEntity<BoardItem>(item, HttpStatus.OK);
+    }
+}
