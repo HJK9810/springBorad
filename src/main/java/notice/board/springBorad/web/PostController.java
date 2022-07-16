@@ -27,6 +27,10 @@ public class PostController {
 
     @GetMapping("/One/{id}")
     public ResponseEntity<BoardItem> getOne(@PathVariable("id") String id) {
+        boardItemRepository.findById(Long.parseLong(id)).ifPresent((element) -> {
+            element.setViewCnt(element.getViewCnt() + 1);
+            boardItemRepository.save(element);
+        });
         BoardItem item = boardItemRepository.findById(Long.parseLong(id)).get();
 
         return new ResponseEntity<BoardItem>(item, HttpStatus.OK);
