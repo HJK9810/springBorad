@@ -2,15 +2,14 @@ package notice.board.springBorad.doamin;
 
 import org.hibernate.annotations.ColumnDefault;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 public class BoardItem {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Long id;
 
@@ -23,6 +22,7 @@ public class BoardItem {
     @Column(columnDefinition = "date")
     private Date date;
 
+    @Column
     @ColumnDefault("0")
     private Integer viewCnt;
 

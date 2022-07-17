@@ -8,9 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 @Controller
 @RequestMapping("/postApi")
@@ -34,5 +34,15 @@ public class PostController {
         BoardItem item = boardItemRepository.findById(Long.parseLong(id)).get();
 
         return new ResponseEntity<BoardItem>(item, HttpStatus.OK);
+    }
+
+    @PostMapping("/add")
+    public BoardItem postItem(@RequestBody BoardItem boardItem) {
+        Date date = new Date();
+        boardItem.setDate(date);
+        boardItem.setViewCnt(0);
+
+        BoardItem saveItem = boardItemRepository.save(boardItem);
+        return saveItem;
     }
 }
