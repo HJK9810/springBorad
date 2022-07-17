@@ -37,12 +37,12 @@ public class PostController {
     }
 
     @PostMapping("/add")
-    public BoardItem postItem(@RequestBody BoardItem boardItem) {
+    public ResponseEntity<BoardItem> postItem(@RequestBody BoardItem boardItem) {
         Date date = new Date();
         boardItem.setDate(date);
         boardItem.setViewCnt(0);
 
         BoardItem saveItem = boardItemRepository.save(boardItem);
-        return saveItem;
+        return new ResponseEntity<BoardItem>(saveItem, HttpStatus.OK);
     }
 }
