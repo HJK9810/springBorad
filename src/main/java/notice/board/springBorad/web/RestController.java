@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping("/postApi")
@@ -44,5 +45,35 @@ public class RestController {
 
         BoardItem saveItem = boardItemRepository.save(boardItem);
         return new ResponseEntity<BoardItem>(saveItem, HttpStatus.OK);
+    }
+
+    @GetMapping("/edit")
+    public ResponseEntity<BoardItem> getForEdit(@PathVariable("id") String id) {
+        BoardItem item = boardItemRepository.findById(Long.parseLong(id)).get();
+
+        return new ResponseEntity<BoardItem>(item, HttpStatus.OK);
+    }
+
+    @PostMapping("/edit/{id}")
+    public ResponseEntity<BoardItem> postEdit(@PathVariable("id") Long id, @RequestBody BoardItem boardItem) {
+        boardItemRepository.findById(id).ifPresent((element) -> {
+            element.setTitle(boardItem.getTitle());
+            element.setText(boardItem.getText());
+            element.setEditer(boardItem.getEditer());
+            element.setViewCnt(element.getViewCnt() - 2);
+
+            boardItemRepository.save(element);
+        });
+        BoardItem item = boardItemRepository.findById(id).get();
+
+        return new ResponseEntity<BoardItem>(item, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/del/{id}")
+    public  ResponseEntity<List<BoardItem>> delete(@PathVariable("id") Long id) {
+        boardItemRepository.deleteById(id);
+
+        List<BoardItem> list = boardItemRepository.findAll();
+        return new ResponseEntity<List<BoardItem>>(list, HttpStatus.OK);
     }
 }
