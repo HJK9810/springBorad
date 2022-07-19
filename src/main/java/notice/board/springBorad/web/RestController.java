@@ -14,7 +14,7 @@ import java.util.Date;
 
 @Controller
 @RequestMapping("/postApi")
-public class PostController {
+public class RestController {
     @Autowired
     private BoardItemRepository boardItemRepository;
 
