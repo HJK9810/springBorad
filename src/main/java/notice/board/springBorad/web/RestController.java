@@ -47,9 +47,9 @@ public class RestController {
         return new ResponseEntity<BoardItem>(saveItem, HttpStatus.OK);
     }
 
-    @GetMapping("/edit")
-    public ResponseEntity<BoardItem> getForEdit(@PathVariable("id") String id) {
-        BoardItem item = boardItemRepository.findById(Long.parseLong(id)).get();
+    @GetMapping("/edit/{id}")
+    public ResponseEntity<BoardItem> getForEdit(@PathVariable("id") Long id) {
+        BoardItem item = boardItemRepository.findById(id).get();
 
         return new ResponseEntity<BoardItem>(item, HttpStatus.OK);
     }
