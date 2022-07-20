@@ -1,7 +1,9 @@
 package notice.board.springBorad.web;
 
 import notice.board.springBorad.doamin.BoardItem;
+import notice.board.springBorad.doamin.CommentItem;
 import notice.board.springBorad.repository.BoardItemRepository;
+import notice.board.springBorad.repository.CommentItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +23,8 @@ import java.util.List;
 public class RestController {
     @Autowired
     private BoardItemRepository boardItemRepository;
+    @Autowired
+    private CommentItemRepository commentItemRepository;
 
     @GetMapping("/list")
     public ResponseEntity<Page<BoardItem>> getList(Pageable pageable) {
@@ -76,5 +82,44 @@ public class RestController {
 
         List<BoardItem> list = boardItemRepository.findAll();
         return new ResponseEntity<List<BoardItem>>(list, HttpStatus.OK);
+    }
+
+    @GetMapping("/comment/{id}")
+    public ResponseEntity<Collection<CommentItem>> commentsList(@PathVariable("id") Long id, Pageable pageable) {
+        Collection<CommentItem> list = boardItemRepository.findById(id).get().getCommentList();
+
+        return new ResponseEntity<Collection<CommentItem>>(list, HttpStatus.OK);
+    }
+
+    @PostMapping("/comment/{id}")
+    public ResponseEntity<BoardItem> addComment(@PathVariable("id") Long id, @RequestBody CommentItem comentItem) {
+        boardItemRepository.findById(id).ifPresent(
+                element -> {
+                    element.setViewCnt(element.getViewCnt() - 1); // 호출시 +1, 이후 다시 view로 넘어갈때 +1
+                    BoardItem item = boardItemRepository.save(element);
+
+                    CommentItem comment = new CommentItem(comentItem.getEditer(), comentItem.getComment(), item);
+                    item.addItemList(comment);
+                    item = boardItemRepository.save(item);
+                });
+        BoardItem item = boardItemRepository.findById(id).get();
+        return new ResponseEntity<BoardItem>(item, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/comment/{id}")
+    public ResponseEntity<BoardItem> deleteComment(@PathVariable("id") Long id, HttpServletRequest req) {
+        BoardItem item = boardItemRepository.findById(id).get();
+        Long commentID = Long.parseLong(req.getParameter("id"));
+        CommentItem comment = commentItemRepository.findById(commentID).get();
+
+        comment.setBordItem(null);
+
+        item.getCommentList().remove(comment);
+        item.setViewCnt(item.getViewCnt() - 1);
+        item.setComentCnt(item.getComentCnt() - 1);
+
+        boardItemRepository.save(item);
+        item = boardItemRepository.findById(id).get();
+        return new ResponseEntity<BoardItem>(item, HttpStatus.OK);
     }
 }
