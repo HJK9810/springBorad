@@ -1,6 +1,6 @@
 package notice.board.springBorad.repository;
 
-import notice.board.springBorad.doamin.BoardItem;
+import notice.board.springBorad.doamin.CommentItem;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BoardItemRepository extends JpaRepository<BoardItem, Long> {
-    Optional<BoardItem> findById(Long id);
+public interface CommentItemRepository extends JpaRepository<CommentItem, Long> {
+    Optional<CommentItem> findById(Long id);
 
-    Page<BoardItem> findAll(Pageable pageable);
+    Page<CommentItem> findAllById(Long id, Pageable pageable);
 
-    List<BoardItem> findAllById(Long id);
+    List<CommentItem> findAllById(Long id);
 }

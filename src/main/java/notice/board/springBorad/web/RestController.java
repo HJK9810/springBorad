@@ -15,6 +15,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/postApi")
+@CrossOrigin(origins = "http://localhost:3000")
 public class RestController {
     @Autowired
     private BoardItemRepository boardItemRepository;
