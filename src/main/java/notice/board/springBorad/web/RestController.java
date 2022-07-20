@@ -96,12 +96,13 @@ public class RestController {
         boardItemRepository.findById(id).ifPresent(
                 element -> {
                     element.setViewCnt(element.getViewCnt() - 1); // 호출시 +1, 이후 다시 view로 넘어갈때 +1
-                    BoardItem item = boardItemRepository.save(element);
+                    boardItemRepository.save(element);
 
-                    CommentItem comment = new CommentItem(comentItem.getEditer(), comentItem.getComment(), item);
-                    item.addItemList(comment);
-                    item = boardItemRepository.save(item);
+                    CommentItem comment = new CommentItem(comentItem.getEditer(), comentItem.getComment(), element);
+                    element.addItemList(comment);
+                    boardItemRepository.save(element);
                 });
+
         BoardItem item = boardItemRepository.findById(id).get();
         return new ResponseEntity<BoardItem>(item, HttpStatus.OK);
     }
