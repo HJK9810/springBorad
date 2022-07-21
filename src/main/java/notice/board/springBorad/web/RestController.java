@@ -6,6 +6,7 @@ import notice.board.springBorad.repository.BoardItemRepository;
 import notice.board.springBorad.repository.CommentItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/postApi")
@@ -36,7 +35,9 @@ public class RestController {
     @GetMapping("/One/{id}")
     public ResponseEntity<BoardItem> getOne(@PathVariable("id") String id) {
         boardItemRepository.findById(Long.parseLong(id)).ifPresent((element) -> {
-            element.setViewCnt(element.getViewCnt() + 1);
+            if(element.getText() != null && !element.getText().isEmpty()) {
+                element.setViewCnt(element.getViewCnt() + 1);
+            }
             boardItemRepository.save(element);
         });
         BoardItem item = boardItemRepository.findById(Long.parseLong(id)).get();
@@ -85,10 +86,15 @@ public class RestController {
     }
 
     @GetMapping("/comment/{id}")
-    public ResponseEntity<Collection<CommentItem>> commentsList(@PathVariable("id") Long id, Pageable pageable) {
+    public ResponseEntity<Page<CommentItem>> commentsList(@PathVariable("id") Long id, Pageable pageable) {
         Collection<CommentItem> list = boardItemRepository.findById(id).get().getCommentList();
+        List<CommentItem> commentList = new ArrayList<CommentItem>(list);
+        Collections.reverse(commentList);
 
-        return new ResponseEntity<Collection<CommentItem>>(list, HttpStatus.OK);
+        int start = (int)pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), commentList.size());
+        Page<CommentItem> page = new PageImpl<>(commentList.subList(start, end), pageable, commentList.size());
+        return new ResponseEntity<Page<CommentItem>>(page, HttpStatus.OK);
     }
 
     @PostMapping("/comment/{id}")
