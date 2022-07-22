@@ -48,10 +48,11 @@ public class RestController {
     @PostMapping("/add")
     public ResponseEntity<BoardItem> postItem(@RequestBody BoardItem boardItem) {
         Date date = new Date();
-        boardItem.setDate(date);
-        boardItem.setViewCnt(0);
+        BoardItem inputItem = new BoardItem(boardItem.getTitle(), boardItem.getText(), date);
+        boardItemRepository.save(inputItem);
+        inputItem.setRootid(inputItem.getId());
 
-        BoardItem saveItem = boardItemRepository.save(boardItem);
+        BoardItem saveItem = boardItemRepository.save(inputItem);
         return new ResponseEntity<BoardItem>(saveItem, HttpStatus.OK);
     }
 
@@ -64,10 +65,12 @@ public class RestController {
 
     @PostMapping("/edit/{id}")
     public ResponseEntity<BoardItem> postEdit(@PathVariable("id") Long id, @RequestBody BoardItem boardItem) {
+        Date date = new Date();
         boardItemRepository.findById(id).ifPresent((element) -> {
             element.setTitle(boardItem.getTitle());
             element.setText(boardItem.getText());
             element.setEditer(boardItem.getEditer());
+            element.setDate(date);
             element.setViewCnt(element.getViewCnt() - 2);
 
             boardItemRepository.save(element);
@@ -79,10 +82,36 @@ public class RestController {
 
     @DeleteMapping("/del/{id}")
     public  ResponseEntity<List<BoardItem>> delete(@PathVariable("id") Long id) {
+        List<BoardItem> list = boardItemRepository.findByRootid(id);
         boardItemRepository.deleteById(id);
+        for(BoardItem item : list) {
+            boardItemRepository.deleteById(item.getId());
+        }
 
-        List<BoardItem> list = boardItemRepository.findAll();
-        return new ResponseEntity<List<BoardItem>>(list, HttpStatus.OK);
+        List<BoardItem> items = boardItemRepository.findAll();
+        return new ResponseEntity<List<BoardItem>>(items, HttpStatus.OK);
+    }
+
+    @PostMapping("/addMention/{id}")
+    public ResponseEntity<BoardItem> addMention(@PathVariable("id") Long id, @RequestBody BoardItem boardItem) {
+        Date date = new Date();
+        boardItem.setDate(date);
+        List<BoardItem> list = boardItemRepository.findByRootid(boardItem.getRootid());
+
+        int cnt = 0;
+        for(BoardItem item : list) {
+            if(item.getId().equals(id)) {
+                cnt = item.getRecnt() + 1;
+                boardItem.setRecnt(cnt);
+                boardItemRepository.save(boardItem);
+            } else if(cnt != 0) {
+                cnt += 1;
+                item.setRecnt(cnt);
+                boardItemRepository.save(item);
+            }
+        }
+
+        return new ResponseEntity<BoardItem>(boardItem, HttpStatus.OK);
     }
 
     @GetMapping("/comment/{id}")

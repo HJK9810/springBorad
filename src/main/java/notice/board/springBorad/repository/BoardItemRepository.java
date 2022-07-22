@@ -16,4 +16,6 @@ public interface BoardItemRepository extends JpaRepository<BoardItem, Long> {
     Page<BoardItem> findAll(Pageable pageable);
 
     List<BoardItem> findAllById(Long id);
+
+    List<BoardItem> findByRootid(Long rootid);
 }

@@ -30,12 +30,26 @@ public class BoardItem {
     @Column
     @ColumnDefault("0")
     private Integer comentCnt;
+    @Column
+    private Long rootid;
+    @Column
+    @ColumnDefault("0")
+    private Integer relevel;
+    @Column
+    @ColumnDefault("0")
+    private Integer recnt;
 
     @JsonManagedReference
-    @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY, mappedBy="bordItem", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "bordItem", orphanRemoval = true)
     private Collection<CommentItem> commentList;
 
-    public BoardItem() {}
+    public BoardItem() {
+        this.rootid = this.id;
+        this.viewCnt = 0;
+        this.comentCnt = 0;
+        this.relevel = 0;
+        this.recnt = 0;
+    }
 
     public BoardItem(String title, String text, Date date) {
         this.title = title;
@@ -43,10 +57,12 @@ public class BoardItem {
         this.date = date;
         this.viewCnt = 0;
         this.comentCnt = 0;
+        this.relevel = 0;
+        this.recnt = 0;
     }
 
     public Collection<CommentItem> getCommentList() {
-        if(commentList == null) commentList = new ArrayList<CommentItem>();
+        if (commentList == null) commentList = new ArrayList<CommentItem>();
 
         return commentList;
     }
@@ -107,6 +123,30 @@ public class BoardItem {
 
     public void setViewCnt(Integer viewCnt) {
         this.viewCnt = viewCnt;
+    }
+
+    public Long getRootid() {
+        return rootid;
+    }
+
+    public void setRootid(Long rootid) {
+        this.rootid = rootid;
+    }
+
+    public Integer getRelevel() {
+        return relevel;
+    }
+
+    public void setRelevel(Integer relevel) {
+        this.relevel = relevel;
+    }
+
+    public Integer getRecnt() {
+        return recnt;
+    }
+
+    public void setRecnt(Integer recnt) {
+        this.recnt = recnt;
     }
 
     public Integer getComentCnt() {
