@@ -48,7 +48,7 @@ public class RestController {
     @PostMapping("/add")
     public ResponseEntity<BoardItem> postItem(@RequestBody BoardItem boardItem) {
         Date date = new Date();
-        BoardItem inputItem = new BoardItem(boardItem.getTitle(), boardItem.getText(), date);
+        BoardItem inputItem = new BoardItem(boardItem.getTitle(), boardItem.getEditer(), boardItem.getText(), date);
         boardItemRepository.save(inputItem);
         inputItem.setRootid(inputItem.getId());
 

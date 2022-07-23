@@ -51,8 +51,9 @@ public class BoardItem {
         this.recnt = 0;
     }
 
-    public BoardItem(String title, String text, Date date) {
+    public BoardItem(String title,String  editer, String text, Date date) {
         this.title = title;
+        this.editer = editer;
         this.text = text;
         this.date = date;
         this.viewCnt = 0;
