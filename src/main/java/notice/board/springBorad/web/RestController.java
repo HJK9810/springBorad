@@ -83,7 +83,6 @@ public class RestController {
     @DeleteMapping("/del/{id}")
     public  ResponseEntity<List<BoardItem>> delete(@PathVariable("id") Long id) {
         List<BoardItem> list = boardItemRepository.findByRootid(id);
-        boardItemRepository.deleteById(id);
         for(BoardItem item : list) {
             boardItemRepository.deleteById(item.getId());
         }
@@ -96,19 +95,20 @@ public class RestController {
     public ResponseEntity<BoardItem> addMention(@PathVariable("id") Long id, @RequestBody BoardItem boardItem) {
         Date date = new Date();
         boardItem.setDate(date);
+        boardItemRepository.save(boardItem);
         List<BoardItem> list = boardItemRepository.findByRootid(boardItem.getRootid());
 
         int cnt = 0;
         for(BoardItem item : list) {
-            if(item.getId().equals(id)) {
+            if(item.getId().equals(id) && item.getRelevel().equals(0)) {
                 cnt = item.getRecnt() + 1;
                 boardItem.setRecnt(cnt);
                 boardItemRepository.save(boardItem);
             } else if(cnt != 0) {
-                cnt += 1;
                 item.setRecnt(cnt);
                 boardItemRepository.save(item);
             }
+            cnt++;
         }
 
         return new ResponseEntity<BoardItem>(boardItem, HttpStatus.OK);
