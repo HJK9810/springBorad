@@ -95,16 +95,17 @@ public class RestController {
     public ResponseEntity<BoardItem> addMention(@PathVariable("id") Long id, @RequestBody BoardItem boardItem) {
         Date date = new Date();
         boardItem.setDate(date);
-        boardItemRepository.save(boardItem);
+        boardItem = boardItemRepository.save(boardItem);
         List<BoardItem> list = boardItemRepository.findByRootid(boardItem.getRootid());
 
         int cnt = 0;
         for(BoardItem item : list) {
-            if(item.getId().equals(id) && item.getRelevel().equals(0)) {
+            if(item.getId().equals(id) && !item.getRelevel().equals(0)) {
                 cnt = item.getRecnt() + 1;
                 boardItem.setRecnt(cnt);
                 boardItemRepository.save(boardItem);
             } else if(cnt != 0) {
+                if(cnt == (list.size() - 1) && boardItem.getRecnt() != 0) continue;
                 item.setRecnt(cnt);
                 boardItemRepository.save(item);
             }
